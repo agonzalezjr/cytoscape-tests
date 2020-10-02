@@ -69,7 +69,7 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
     <CytoscapeComponent
       cy={(cy): void => {
         cy.on("select", (_x) => {
-          console.log("something was selected");
+          console.log("something was selected here");
         });
       }}
       elements={props.elements}
