@@ -11,21 +11,27 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
     // other options
     padding: 50,
     nodeDimensionsIncludeLabels: true,
-    // idealEdgeLength: 100,
-    edgeElasticity: 0.1
-    // nodeRepulsion: 8500,
+    idealEdgeLength: 75,
+    // edgeElasticity: 0.1,
+    // nodeRepulsion: 10000,
   };
 
-  const cytoscapeStylesheet = [
+  const cytoscapeStylesheet: Array<cytoscape.Stylesheet> = [
     {
       selector: "node",
       style: {
-        "background-color": "#43447a",
+        "background-color": "#1976d2",
         width: "label",
         height: "label",
-        padding: "6px",
-        shape: "round-rectangle"
-      }
+        // a single "padding" is not supported in the types
+        "padding-top": "4",
+        "padding-bottom": "4",
+        "padding-left": "4",
+        "padding-right": "4",
+        // this fixes the text being shifted down on nodes (sadly no fix for edges, but it's not as obvious there without borders)
+        "text-margin-y": -3,
+        shape: "round-rectangle",
+      },
     },
     {
       selector: "node[label]",
@@ -34,36 +40,29 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
         "font-size": "12",
         color: "white",
         "text-halign": "center",
-        "text-valign": "center"
-      }
+        "text-valign": "center",
+      },
     },
     {
       selector: "edge",
       style: {
         "curve-style": "bezier",
         "target-arrow-shape": "triangle",
-        width: 1.5
-      }
+        width: 1.5,
+      },
     },
     {
       selector: "edge[label]",
       style: {
         label: "data(label)",
         "font-size": "12",
-
         "text-background-color": "white",
         "text-background-opacity": 1,
         "text-background-padding": "2px",
-
-        "text-border-color": "black",
-        "text-border-style": "solid",
-        "text-border-width": 0.5,
-        "text-border-opacity": 1
-
-        // "text-rotation": "autorotate"
-      }
-    }
-  ] as Array<cytoscape.Stylesheet>;
+        "text-margin-y": -4,
+      },
+    },
+  ];
 
   return (
     <CytoscapeComponent
