@@ -60,15 +60,19 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
         "text-background-opacity": 1,
         "text-background-padding": "2px",
         "text-margin-y": -4,
+        // so the transition is selected when its label/name is selected
+        "text-events": "yes",
       },
     },
   ];
 
   return (
     <CytoscapeComponent
+      boxSelectionEnabled={false}
       cy={(cy): void => {
-        cy.on("select", (_x) => {
-          console.log("something was selected here");
+        cy.on("select", "edge", (event) => {
+          const transitionName = event.target[0].data().label;
+          console.log(`> transition '${transitionName}' selected`);
         });
       }}
       elements={props.elements}
