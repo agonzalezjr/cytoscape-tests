@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useRef } from "react";
 import Cytoscape from "cytoscape";
 import COSEBilkent from "cytoscape-cose-bilkent";
 import CytoscapeComponent from "react-cytoscapejs";
@@ -6,11 +6,31 @@ import CytoscapeComponent from "react-cytoscapejs";
 Cytoscape.use(COSEBilkent);
 
 export const WorkflowCytoscapeChart = (props: any): ReactElement => {
+  const cyRef = useRef<Cytoscape.Core>();
+
+  // This effect runs once on mount and handles setting up imperative
+  // event listeners on the Cytoscape core ref
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) {
+      return;
+    }
+    cy.on("select", "edge", (event) => {
+      const transitionName = event.target[0].data().label;
+      // eslint-disable-next-line no-console
+      console.log(`> transition '${transitionName}' selected`);
+    });
+  }, []);
+
   const layout = {
     name: "cose-bilkent",
     // other options
     padding: 50,
     nodeDimensionsIncludeLabels: true,
+    // These options all help keep the nodes farther from each other
+    // so that edge labels (the transition names) have more space to
+    // render. The 'idealEdgeLength' seems like the best choice for
+    // the workflows tested.
     idealEdgeLength: 75,
     // edgeElasticity: 0.1,
     // nodeRepulsion: 10000,
@@ -23,7 +43,7 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
         "background-color": "#1976d2",
         width: "label",
         height: "label",
-        // a single "padding" is not supported in the types
+        // a single "padding" is not supported in the types :(
         "padding-top": "4",
         "padding-bottom": "4",
         "padding-left": "4",
@@ -70,14 +90,16 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
     <CytoscapeComponent
       boxSelectionEnabled={false}
       cy={(cy): void => {
-        cy.on("select", "edge", (event) => {
-          const transitionName = event.target[0].data().label;
-          console.log(`> transition '${transitionName}' selected`);
-        });
+        cyRef.current = cy;
       }}
       elements={props.elements}
       layout={layout}
-      style={{ top: 0, bottom: 0, position: "absolute", width: "100%" }}
+      style={{
+        top: 0,
+        bottom: 0,
+        position: "absolute",
+        width: "100%",
+      }}
       stylesheet={cytoscapeStylesheet}
     />
   );
