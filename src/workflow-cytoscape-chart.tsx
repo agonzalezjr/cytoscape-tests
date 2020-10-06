@@ -107,6 +107,7 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
 
   return (
     <CytoscapeComponent
+      key={elements.length}
       boxSelectionEnabled={false}
       cy={(cy): void => {
         cyRef.current = cy;
