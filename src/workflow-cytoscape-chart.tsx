@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import Cytoscape from "cytoscape";
 import COSEBilkent from "cytoscape-cose-bilkent";
 import CytoscapeComponent from "react-cytoscapejs";
@@ -7,6 +7,8 @@ Cytoscape.use(COSEBilkent);
 
 export const WorkflowCytoscapeChart = (props: any): ReactElement => {
   const cyRef = useRef<Cytoscape.Core>();
+
+  const [elements, setElements] = useState(props.elements);
 
   // This effect runs once on mount and handles setting up imperative
   // event listeners on the Cytoscape core ref
@@ -20,6 +22,23 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
       // eslint-disable-next-line no-console
       console.log(`> transition '${transitionName}' selected`);
     });
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setElements([
+        ...elements,
+        { data: { id: "Closed", label: "Closed" }, selectable: true },
+        {
+          data: {
+            source: "Approved",
+            target: "Closed",
+            label: "close",
+            id: "a7",
+          },
+        },
+      ]);
+    }, 3000);
   }, []);
 
   const layout = {
@@ -92,7 +111,7 @@ export const WorkflowCytoscapeChart = (props: any): ReactElement => {
       cy={(cy): void => {
         cyRef.current = cy;
       }}
-      elements={props.elements}
+      elements={elements}
       layout={layout}
       style={{
         top: 0,
